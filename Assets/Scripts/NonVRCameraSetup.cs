@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SpectatorView : MonoBehaviour
+public class NonVRCameraSetup : MonoBehaviour
 {
     public Camera spectatorCamera;
     private RawImage rawImage;
