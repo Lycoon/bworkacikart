@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: dde81ff77c18db543ba11357b8b3cdbd
   - enabled: 1
-    path: Assets/Marketplace Assets/LowPoly Environment Pack/Demo/Demo 3.unity
+    path: Assets/Scenes/World.unity
     guid: 3968a21f23951b942811bf09fca9e1a0
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 645a88f5b8c36794ba4c80c6cc6fdcc1, type: 2}
