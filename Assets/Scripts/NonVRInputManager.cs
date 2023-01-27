@@ -3,41 +3,62 @@ using UnityEngine.InputSystem;
 
 public class NonVRInputManager : MonoBehaviour
 {
+    public enum InputMode { Game, UI }
+
+    [Header("References")]
     public PlayerInput playerInput;
+    public GameObject pauseMenu;
+
+    [Header("Settings")]
+    public bool isPaused = false;
+
+    public void SetGameState(InputMode inputMode)
+    {
+        Debug.Log("Switching to " + inputMode + " input mode");
+        switch (inputMode)
+        {
+            case InputMode.Game:
+                playerInput.SwitchCurrentActionMap("Player");
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                break;
+            case InputMode.UI:
+                playerInput.SwitchCurrentActionMap("UI");
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                break;
+        }
+    }
 
     void Start()
     {
-        EnableUIInputs();
-    }
-
-    void EnableGameInputs()
-    {
-        Debug.Log("EnableGameInputs");
-        if (playerInput != null)
-            playerInput.SwitchCurrentActionMap("Player");
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    void EnableUIInputs()
-    {
-        Debug.Log("EnableUIInputs");
-        if (playerInput != null)
-            playerInput.SwitchCurrentActionMap("UI");
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        SetGameState(InputMode.Game);
     }
 
     void Update()
     {
-        if (Input.GetMouseButton(0) && Cursor.lockState != CursorLockMode.Locked)
-        {
-            EnableGameInputs();
-        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+            TogglePauseMenu();
+    }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && Cursor.lockState != CursorLockMode.None)
-        {
-            EnableUIInputs();
-        }
+    public void TogglePauseMenu()
+    {
+        isPaused = !isPaused;
+        pauseMenu.SetActive(isPaused);
+
+        if (!isPaused)
+            SetGameState(InputMode.Game);
+        else
+            SetGameState(InputMode.UI);
+    }
+
+    public void ToggleOptions()
+    {
+        Debug.Log("Options");
+    }
+
+    public void OnClickQuit()
+    {
+        Application.Quit();
     }
 }
