@@ -20,7 +20,7 @@ public class MainMenuUI : MonoBehaviour
     public void OnClickPlay()
     {
         HideMainMenuUI();
-        StartCoroutine(LoadSceneAsync("Demo 3"));
+        StartCoroutine(LoadSceneAsync("World"));
     }
 
     public void OnClickOptions()
