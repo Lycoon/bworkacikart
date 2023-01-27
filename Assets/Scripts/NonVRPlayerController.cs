@@ -37,8 +37,13 @@ public class NonVRPlayerController : MonoBehaviour
 
     void Update()
     {
-        Vector3 move = cameraTransform.forward * moveInput.y * moveSpeed;
-        move += cameraTransform.right * moveInput.x * moveSpeed;
+        Vector3 cameraForward = transform.position - cameraTransform.position;
+        cameraForward.y = 0.0f;
+        cameraForward = cameraForward.normalized;
+        Vector3 cameraRight = Vector3.Cross(Vector3.up, cameraForward);
+
+        Vector3 move = cameraForward * moveInput.y * moveSpeed;
+        move += cameraRight * moveInput.x * moveSpeed;
 
         verticalSpeed += Physics.gravity.y * gravityModifier * Time.deltaTime;
         move.y = verticalSpeed;
@@ -47,12 +52,7 @@ public class NonVRPlayerController : MonoBehaviour
 
         if (moveInput.magnitude > 0.0f)
         {
-            Vector3 cameraForward = transform.position - cameraTransform.position;
-            cameraForward.y = 0.0f;
-            cameraForward = cameraForward.normalized;
-            Vector3 cameraRight = Vector3.Cross(cameraForward, Vector3.up);
-
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(-moveInput.x * cameraRight + moveInput.y * cameraForward), Time.deltaTime * rotationSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveInput.x * cameraRight + moveInput.y * cameraForward), Time.deltaTime * rotationSpeed);
         }
     }
 }
