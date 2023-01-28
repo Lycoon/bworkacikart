@@ -132,6 +132,9 @@ MonoBehaviour:
   joint1: {fileID: 7882359480228273728}
   hand: {fileID: 7882359479190144232}
   target: {fileID: 0}
+  distanceBeforeTargetUpdate: 1
+  legPlacementSpeed: 30
+  legPivotCenterOffset: 0.3
 --- !u!1 &7882359480196765201
 GameObject:
   m_ObjectHideFlags: 0

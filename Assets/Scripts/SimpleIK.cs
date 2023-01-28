@@ -15,26 +15,51 @@ public class SimpleIK : MonoBehaviour
     private float length0;
     private float length1;
 
+    [Header("Leg")]
+    public float distanceBeforeTargetUpdate = 1f;
+    public float legPlacementSpeed = 5f;
+    public float legPivotCenterOffset = 0.1f;
+
+    private Transform worldTarget;
+    private Vector3 startTargetPosition;
+    private Vector3 endTargetPosition;
+    private float lastTargetUpdate;
+    private float legPlacementDuration => distanceBeforeTargetUpdate / legPlacementSpeed;
+
+    static Vector3 GroundPosition(Vector3 position, float castLenght = 10f)
+    {
+        if (Physics.Raycast(position, Vector3.down, out RaycastHit hit, castLenght))
+        {
+            return new Vector3(position.x, hit.point.y, position.z);
+        }
+        return position;
+    }
+
     void Start()
     {
         length0 = Vector3.Distance(joint0.position, joint1.position);
         length1 = Vector3.Distance(joint1.position, hand.position);
+
+        worldTarget = Object.Instantiate(target.gameObject, GroundPosition(target.position), target.rotation).transform;
+        startTargetPosition = worldTarget.position;
+        endTargetPosition = worldTarget.position;
+        lastTargetUpdate = Time.time;
     }
 
-    void Update()
+    void Solve(Vector3 targetPosition)
     {
         float jointAngle0;
         float jointAngle1;
 
-        float length2 = Vector3.Distance(joint0.position, target.position);
+        float length2 = Vector3.Distance(joint0.position, targetPosition);
 
-        Vector3 diff = target.position - joint0.position;
+        Vector3 diff = targetPosition - joint0.position;
 
         // tan^-1(Δz / Δx) (angle in XY plane, top down view)
         float atanXZ = Mathf.Atan2(diff.z, diff.x) * Mathf.Rad2Deg;
 
         // tan^-1(Δy / Δx) (angle in XZ plane, side view)
-        float deltaW = (new Vector2(target.position.x - joint0.position.x, target.position.z - joint0.position.z)).magnitude;
+        float deltaW = (new Vector2(targetPosition.x - joint0.position.x, targetPosition.z - joint0.position.z)).magnitude;
         float atanXY = Mathf.Atan2(diff.y, deltaW) * Mathf.Rad2Deg;
 
         if (length0 + length1 < length2)
@@ -59,6 +84,7 @@ public class SimpleIK : MonoBehaviour
         Vector3 Euler0 = joint0.transform.eulerAngles;
         Euler0.y = -atanXZ; // Rotate the whole arm around the vertical axis
         joint0.transform.eulerAngles = Euler0;
+        // joint0.transform.rotation = Quaternion.Slerp(joint0.transform.rotation, Quaternion.Euler(Euler0), legPlacementSpeedFactor * Time.deltaTime);
 
         Euler0 = joint0.transform.localEulerAngles;
         // Euler0.y = -atanXZ; // Rotate the whole arm around the vertical axis
@@ -70,49 +96,26 @@ public class SimpleIK : MonoBehaviour
         joint1.transform.localEulerAngles = Euler1;
     }
 
-    // void Update()
-    // {
+    void Update()
+    {
+        Vector3 targetPosition = GroundPosition(target.position);
 
-    //     Vector3 diff = target.position - joint0.position;
+        float elapsed = Time.time - lastTargetUpdate;
 
-    //     float atanXY = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        if (Vector3.Distance(worldTarget.position, targetPosition) > distanceBeforeTargetUpdate && elapsed > Time.deltaTime)
+        {
+            startTargetPosition = worldTarget.position;
+            endTargetPosition = targetPosition;
+            lastTargetUpdate = Time.time;
+        }
 
-    //     float deltaW = (new Vector2(target.position.x - joint0.position.x, target.position.y - joint0.position.y)).magnitude;
-    //     float atanXZ = Mathf.Atan2(diff.z, deltaW) * Mathf.Rad2Deg;
+        Vector3 center = (startTargetPosition + endTargetPosition) / 2;
+        center -= Vector3.up * legPivotCenterOffset;
 
-    //     float length2 = Vector3.Distance(joint0.position, target.position);
+        Vector3 relativeStart = startTargetPosition - center;
+        Vector3 relativeEnd = endTargetPosition - center;
 
-    //     float jointAngle0 = 0.0f;
-    //     float jointAngle1 = 0.0f;
-
-    //     // Out of reach, fully extend arm
-    //     if (length0 + length1 < length2)
-    //     {
-    //         jointAngle0 = atanXY;
-    //         jointAngle1 = 0;
-    //     }
-    //     else
-    //     {
-    //         float cosAngle0 = ((length2 * length2) - (length0 * length0) - (length1 * length1)) / (2 * length2 * length0);
-    //         float cosAngle1 = ((length1 * length1) + (length0 * length0) - (length2 * length2)) / (2 * length1 * length0);
-
-    //         float angle0 = Mathf.Acos(cosAngle0) * Mathf.Rad2Deg;
-    //         float angle1 = Mathf.Acos(cosAngle1) * Mathf.Rad2Deg;
-
-    //         jointAngle0 = -angle0 - atanXZ;
-    //         jointAngle1 = 180 - angle1;
-    //     }
-
-    //     Vector3 Euler0 = joint0.transform.localEulerAngles;
-    //     Euler0.z = atanXY * Mathf.Rad2Deg;
-    //     joint0.transform.localEulerAngles = Euler0;
-
-    //     Vector3 Euler1 = joint0.transform.localEulerAngles;
-    //     Euler1.y = jointAngle0 * Mathf.Rad2Deg;
-    //     joint0.transform.localEulerAngles = Euler1;
-
-    //     Vector3 Euler2 = joint1.transform.localEulerAngles;
-    //     Euler2.y = jointAngle1 * Mathf.Rad2Deg;
-    //     joint1.transform.localEulerAngles = Euler2;
-    // }
+        worldTarget.position = center + Vector3.Slerp(relativeStart, relativeEnd, elapsed / legPlacementDuration);
+        Solve(worldTarget.position);
+    }
 }
