@@ -55,4 +55,10 @@ public class IKLeg : MonoBehaviour
         worldTarget.position = center + Vector3.Slerp(relativeStart, relativeEnd, elapsed / legPlacementDuration);
         legIK.Solve(worldTarget.position);
     }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(target.position, 0.1f);
+    }
 }
