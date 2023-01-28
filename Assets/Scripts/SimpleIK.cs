@@ -1,52 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SimpleIK : MonoBehaviour
 {
-    [Header("Joints")]
     public Transform joint0;
     public Transform joint1;
     public Transform hand;
 
-    [Header("Target")]
-    public Transform target;
-
     private float length0;
     private float length1;
 
-    [Header("Leg")]
-    public float distanceBeforeTargetUpdate = 1f;
-    public float legPlacementSpeed = 5f;
-    public float legPivotCenterOffset = 0.1f;
-
-    private Transform worldTarget;
-    private Vector3 startTargetPosition;
-    private Vector3 endTargetPosition;
-    private float lastTargetUpdate;
-    private float legPlacementDuration => distanceBeforeTargetUpdate / legPlacementSpeed;
-
-    static Vector3 GroundPosition(Vector3 position, float castLenght = 10f)
+    public SimpleIK(Transform joint0, Transform joint1, Transform hand)
     {
-        if (Physics.Raycast(position, Vector3.down, out RaycastHit hit, castLenght))
-        {
-            return new Vector3(position.x, hit.point.y, position.z);
-        }
-        return position;
-    }
+        this.joint0 = joint0;
+        this.joint1 = joint1;
+        this.hand = hand;
 
-    void Start()
-    {
         length0 = Vector3.Distance(joint0.position, joint1.position);
         length1 = Vector3.Distance(joint1.position, hand.position);
-
-        worldTarget = Object.Instantiate(target.gameObject, GroundPosition(target.position), target.rotation).transform;
-        startTargetPosition = worldTarget.position;
-        endTargetPosition = worldTarget.position;
-        lastTargetUpdate = Time.time;
     }
 
-    void Solve(Vector3 targetPosition)
+    public void Solve(Vector3 targetPosition)
     {
         float jointAngle0;
         float jointAngle1;
@@ -84,7 +57,6 @@ public class SimpleIK : MonoBehaviour
         Vector3 Euler0 = joint0.transform.eulerAngles;
         Euler0.y = -atanXZ; // Rotate the whole arm around the vertical axis
         joint0.transform.eulerAngles = Euler0;
-        // joint0.transform.rotation = Quaternion.Slerp(joint0.transform.rotation, Quaternion.Euler(Euler0), legPlacementSpeedFactor * Time.deltaTime);
 
         Euler0 = joint0.transform.localEulerAngles;
         // Euler0.y = -atanXZ; // Rotate the whole arm around the vertical axis
@@ -94,28 +66,5 @@ public class SimpleIK : MonoBehaviour
         Vector3 Euler1 = joint1.transform.localEulerAngles;
         Euler1.z = jointAngle1;
         joint1.transform.localEulerAngles = Euler1;
-    }
-
-    void Update()
-    {
-        Vector3 targetPosition = GroundPosition(target.position);
-
-        float elapsed = Time.time - lastTargetUpdate;
-
-        if (Vector3.Distance(worldTarget.position, targetPosition) > distanceBeforeTargetUpdate && elapsed > Time.deltaTime)
-        {
-            startTargetPosition = worldTarget.position;
-            endTargetPosition = targetPosition;
-            lastTargetUpdate = Time.time;
-        }
-
-        Vector3 center = (startTargetPosition + endTargetPosition) / 2;
-        center -= Vector3.up * legPivotCenterOffset;
-
-        Vector3 relativeStart = startTargetPosition - center;
-        Vector3 relativeEnd = endTargetPosition - center;
-
-        worldTarget.position = center + Vector3.Slerp(relativeStart, relativeEnd, elapsed / legPlacementDuration);
-        Solve(worldTarget.position);
     }
 }
