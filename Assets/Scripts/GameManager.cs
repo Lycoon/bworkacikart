@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public GameObject collectiblePrefab;
     public GameObject collectiblePositions;
     public TMPro.TextMeshProUGUI scoreDisplay;
+    public GameObject groundBreakParticlesPrefab;
 
     [Header("Game Settings")]
     public int score = 0;
@@ -27,7 +28,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("New collectible spawned at position " + newPos);
         GameObject newCollectible = Instantiate(collectiblePrefab, collectiblePositions.transform.GetChild(newPos).position, Quaternion.identity);
-        
+
         lastCollectiblePosition = newPos;
     }
 

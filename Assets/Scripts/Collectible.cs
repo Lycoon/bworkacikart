@@ -5,6 +5,9 @@ public class Collectible : MonoBehaviour
     [Header("References")]
     public ParticleSystem particles;
     public GameObject collectibleMesh;
+    public SphereCollider sphereCollider;
+    public Light pointLight;
+    public AudioSource audioSource;
 
     [Header("Settings")]
     public float amplitude = 0.5f;
@@ -29,8 +32,18 @@ public class Collectible : MonoBehaviour
     public void Collect()
     {
         particles.Play();
+        audioSource.Play();
+
         collectibleMesh.SetActive(false);
+        pointLight.enabled = false;
+        sphereCollider.enabled = false; // otherwise the player can collect it again
 
         Destroy(gameObject, 2.5f);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position, Vector3.up * 35f);
     }
 }
