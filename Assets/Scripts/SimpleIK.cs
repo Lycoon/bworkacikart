@@ -9,6 +9,8 @@ public class SimpleIK : MonoBehaviour
     private float length0;
     private float length1;
 
+    public float TotalLength => length0 + length1;
+
     public SimpleIK(Transform joint0, Transform joint1, Transform hand)
     {
         this.joint0 = joint0;

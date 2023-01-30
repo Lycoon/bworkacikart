@@ -16,44 +16,46 @@ public class IKLeg : MonoBehaviour
 
     private SimpleIK legIK;
 
-    private Transform worldTarget;
+    private Vector3 worldTarget;
     private Vector3 startTargetPosition;
     private Vector3 endTargetPosition;
     private float lastTargetUpdate;
     private float legPlacementDuration => distanceBeforeTargetUpdate / legPlacementSpeed;
 
+    public Vector3 WorldTargetPosition => worldTarget;
+    public SimpleIK LegIK => legIK;
 
     void Start()
     {
         legIK = new SimpleIK(joint0, joint1, hand);
 
-        worldTarget = Object.Instantiate(target.gameObject, Utils.GroundPosition(target.position), target.rotation).transform;
-        startTargetPosition = worldTarget.position;
-        endTargetPosition = worldTarget.position;
+        worldTarget = Utils.GroundPosition(target.position, -transform.up);
+        startTargetPosition = worldTarget;
+        endTargetPosition = worldTarget;
         lastTargetUpdate = Time.time;
     }
 
-    void Update()
+    public void UpdateTarget()
     {
-        Vector3 targetPosition = Utils.GroundPosition(target.position);
+        Vector3 targetPosition = Utils.GroundPosition(target.position, -transform.up);
 
         float elapsed = Time.time - lastTargetUpdate;
 
-        if (Vector3.Distance(worldTarget.position, targetPosition) > distanceBeforeTargetUpdate && elapsed > Time.deltaTime)
+        if (Vector3.Distance(worldTarget, targetPosition) > distanceBeforeTargetUpdate && elapsed > Time.deltaTime)
         {
-            startTargetPosition = worldTarget.position;
+            startTargetPosition = worldTarget;
             endTargetPosition = targetPosition;
             lastTargetUpdate = Time.time;
         }
 
         Vector3 center = (startTargetPosition + endTargetPosition) / 2;
-        center -= Vector3.up * legPivotCenterOffset;
+        center -= transform.up * legPivotCenterOffset;
 
         Vector3 relativeStart = startTargetPosition - center;
         Vector3 relativeEnd = endTargetPosition - center;
 
-        worldTarget.position = center + Vector3.Slerp(relativeStart, relativeEnd, elapsed / legPlacementDuration);
-        legIK.Solve(worldTarget.position);
+        worldTarget = center + Vector3.Slerp(relativeStart, relativeEnd, elapsed / legPlacementDuration);
+        legIK.Solve(worldTarget);
     }
 
     void OnDrawGizmos()
