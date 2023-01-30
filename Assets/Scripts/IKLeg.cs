@@ -22,7 +22,7 @@ public class IKLeg : MonoBehaviour
     private float lastTargetUpdate;
     private float legPlacementDuration => distanceBeforeTargetUpdate / legPlacementSpeed;
 
-    public Vector3 WorldTargetPosition => worldTarget;
+    public Vector3 WorldTargetPosition => endTargetPosition;
     public SimpleIK LegIK => legIK;
 
     void Start()
@@ -49,7 +49,7 @@ public class IKLeg : MonoBehaviour
         }
 
         Vector3 center = (startTargetPosition + endTargetPosition) / 2;
-        center -= transform.up * legPivotCenterOffset;
+        center -= Vector3.up * legPivotCenterOffset;
 
         Vector3 relativeStart = startTargetPosition - center;
         Vector3 relativeEnd = endTargetPosition - center;
@@ -62,5 +62,8 @@ public class IKLeg : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(target.position, 0.1f);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(worldTarget, 0.1f);
     }
 }
