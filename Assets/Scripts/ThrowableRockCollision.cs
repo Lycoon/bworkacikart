@@ -8,6 +8,7 @@ public class ThrowableRockCollision : MonoBehaviour
     public ParticleSystem grassParticleSystem;
     public float destroyDelay = 3.5f;
     public float destroyTreeDelay = 10f;
+    public float destroyDistance = 150f;
 
     public float directHitDamage = 50f;
     public float aoeHitDamage = 20f;
@@ -20,6 +21,14 @@ public class ThrowableRockCollision : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    void FixedUpdate()
+    {
+        if (Vector3.Distance(transform.position, GameManager.Instance.mapOrigin.position) > destroyDistance)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void AOEImpact(Vector3 impactPoint, float velocity)

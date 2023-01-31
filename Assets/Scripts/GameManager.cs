@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public float timeLeft;
 
     [Header("Giant settings")]
+    public Transform mapOrigin;
     public Transform giant;
     public InputActionProperty locomotionAction;
 

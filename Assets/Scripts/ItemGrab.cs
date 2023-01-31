@@ -5,17 +5,24 @@ using System.Linq;
 public class ItemGrab : MonoBehaviour
 {
     public InputActionProperty grabAction;
+    public InputActionProperty triggerAction;
     public LayerMask grabbableLayer;
 
     public float radius = 2f;
     public Transform grabPoint;
+    public Transform projectileSpawnPoint;
+
+    public GameObject projectilePrefab;
 
     private FixedJoint fixedJoint;
     private bool isGrabbing = false;
 
+    private GameObject spawnedProjectile;
+
     void FixedUpdate()
     {
         bool isGrabButtonPressed = grabAction.action.ReadValue<float>() > 0.1f;
+        bool isTriggerButtonPressed = triggerAction.action.ReadValue<float>() > 0.1f;
 
         if (isGrabButtonPressed && !isGrabbing)
         {
@@ -51,6 +58,11 @@ public class ItemGrab : MonoBehaviour
             }
 
             isGrabbing = false;
+        }
+
+        if (isTriggerButtonPressed && !isGrabbing && spawnedProjectile == null)
+        {
+            spawnedProjectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
         }
     }
 
