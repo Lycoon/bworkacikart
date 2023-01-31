@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,8 +12,15 @@ public class GameManager : MonoBehaviour
     public GameObject groundBreakParticlesPrefab;
     public Health health;
 
+    public Transform giant;
+    public InputActionProperty locomotionAction;
+
     [Header("Settings")]
     public int collectibleHealth = 10;
+    public float giantRotationAngleStep = 10f;
+    private float giantRotateDelay = 0.5f;
+
+    private float lastRotate = 0f;
 
     private static GameManager instance = null;
     public static GameManager Instance => instance;
@@ -51,5 +59,15 @@ public class GameManager : MonoBehaviour
     {
         health.Heal(collectibleHealth);
         SpawnNewCollectible();
+    }
+
+    void Update()
+    {
+        float rotate = locomotionAction.action.ReadValue<Vector2>().x;
+        if (rotate != 0 && Time.time > lastRotate + giantRotateDelay)
+        {
+            lastRotate = Time.time;
+            giant.RotateAround(Vector3.zero, Vector3.up, -rotate * giantRotationAngleStep);
+        }
     }
 }
