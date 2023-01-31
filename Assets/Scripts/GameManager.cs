@@ -11,9 +11,10 @@ public class GameManager : MonoBehaviour
     public GameObject collectiblePositions;
     public TMPro.TextMeshProUGUI scoreDisplay;
     public GameObject groundBreakParticlesPrefab;
+    public Health health;
 
-    [Header("Game Settings")]
-    public int score = 0;
+    [Header("Settings")]
+    public int collectibleHealth = 10;
 
     void Start()
     {
@@ -34,13 +35,7 @@ public class GameManager : MonoBehaviour
 
     public void PickCollectible()
     {
-        AddToScore(1);
+        health.Heal(collectibleHealth);
         SpawnNewCollectible();
-    }
-
-    public void AddToScore(int amount)
-    {
-        score += amount;
-        scoreDisplay.text = "Score " + score.ToString();
     }
 }

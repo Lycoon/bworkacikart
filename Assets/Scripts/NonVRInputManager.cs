@@ -13,6 +13,8 @@ public class NonVRInputManager : MonoBehaviour
     public RawImage VRView;
     public CanvasGroup blackScreenCanvasGroup;
     public GameObject blackScreen;
+    public Slider brightnessSlider;
+    public Light moon;
 
     [Header("Settings")]
     public bool isPaused = false;
@@ -56,6 +58,9 @@ public class NonVRInputManager : MonoBehaviour
                 isFadingOut = false;
             }
         }
+
+        // Brightness value
+        moon.intensity = brightnessSlider.value;
     }
 
     public void TogglePauseMenu()
