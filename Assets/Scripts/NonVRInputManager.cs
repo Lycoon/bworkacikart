@@ -5,11 +5,14 @@ using UnityEngine.UI;
 public class NonVRInputManager : MonoBehaviour
 {
     public enum InputMode { Game, UI }
+    private bool isFadingOut = false;
 
     [Header("References")]
     public PlayerInput playerInput;
     public GameObject pauseMenu;
-    public RawImage vrView;
+    public RawImage VRView;
+    public CanvasGroup blackScreenCanvasGroup;
+    public GameObject blackScreen;
 
     [Header("Settings")]
     public bool isPaused = false;
@@ -35,12 +38,24 @@ public class NonVRInputManager : MonoBehaviour
     void Start()
     {
         SetGameState(InputMode.Game);
+        isFadingOut = true;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePauseMenu();
+        
+        // Black screen fade out on scene loading
+        if (isFadingOut)
+        {
+            blackScreenCanvasGroup.alpha -= Time.deltaTime * 0.2f;
+            if (blackScreenCanvasGroup.alpha <= 0)
+            {
+                blackScreenCanvasGroup.alpha = 0;
+                isFadingOut = false;
+            }
+        }
     }
 
     public void TogglePauseMenu()
@@ -61,7 +76,7 @@ public class NonVRInputManager : MonoBehaviour
 
     public void ToggleVRView()
     {
-        vrView.enabled = !vrView.enabled;
+        VRView.enabled = !VRView.enabled;
     }
 
     public void OnClickQuit()

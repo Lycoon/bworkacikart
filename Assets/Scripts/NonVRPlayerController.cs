@@ -3,17 +3,19 @@ using UnityEngine.InputSystem;
 
 public class NonVRPlayerController : MonoBehaviour
 {
+    [Header("References")]
+    public Transform cameraTransform;
+    public AudioSource walkAudioSource;
+
+    [Header("Settings")]
     public float moveSpeed = 10.0f;
     public float rotationSpeed = 10.0f;
     public float jumpForce = 10.0f;
     public float gravityModifier = 2.0f;
-    public Transform cameraTransform;
 
     private CharacterController controller;
     private PlayerInput playerInput;
-
     private Vector2 moveInput = Vector2.zero;
-
     private float verticalSpeed = 0.0f;
 
     void Start()
@@ -25,6 +27,11 @@ public class NonVRPlayerController : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+
+        if (moveInput.magnitude > 0.0f && controller.isGrounded)
+            walkAudioSource.enabled = true;
+        else
+            walkAudioSource.enabled = false;
     }
 
     void OnJump()
@@ -32,6 +39,7 @@ public class NonVRPlayerController : MonoBehaviour
         if (controller.isGrounded)
         {
             verticalSpeed = jumpForce;
+            walkAudioSource.enabled = false;
         }
     }
 
