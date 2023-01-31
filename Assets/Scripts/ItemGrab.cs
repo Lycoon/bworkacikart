@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class ItemGrab : MonoBehaviour
 {
     public InputActionProperty grabAction;
-    public float radius = 0.1f;
     public LayerMask grabbableLayer;
+
+    public float radius = 2f;
+    public Transform grabPoint;
 
     private FixedJoint fixedJoint;
     private bool isGrabbing = false;
@@ -16,15 +19,17 @@ public class ItemGrab : MonoBehaviour
 
         if (isGrabButtonPressed && !isGrabbing)
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, radius, grabbableLayer, QueryTriggerInteraction.Ignore);
+            Collider[] colliders = Physics.OverlapSphere(grabPoint.position, radius, grabbableLayer, QueryTriggerInteraction.Ignore);
+            Collider[] orderedByProximity = colliders.OrderBy(c => (grabPoint.position - c.transform.position).sqrMagnitude).ToArray();
 
-            if (colliders.Length > 0)
+            if (orderedByProximity.Length > 0)
             {
-                Rigidbody nearbyRigidbody = colliders[0].GetComponent<Rigidbody>();
+                Collider collider = orderedByProximity[0];
 
                 fixedJoint = gameObject.AddComponent<FixedJoint>();
                 fixedJoint.autoConfigureConnectedAnchor = false;
 
+                Rigidbody nearbyRigidbody = collider.GetComponent<Rigidbody>();
                 if (nearbyRigidbody != null)
                 {
                     fixedJoint.connectedBody = nearbyRigidbody;
@@ -32,7 +37,7 @@ public class ItemGrab : MonoBehaviour
                 }
                 else
                 {
-                    fixedJoint.connectedBody = colliders[0].attachedRigidbody;
+                    fixedJoint.connectedBody = collider.attachedRigidbody;
                 }
 
                 isGrabbing = true;
@@ -46,6 +51,15 @@ public class ItemGrab : MonoBehaviour
             }
 
             isGrabbing = false;
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (grabPoint != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(grabPoint.position, radius);
         }
     }
 }
