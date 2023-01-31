@@ -16,6 +16,7 @@ public class NonVRInputManager : MonoBehaviour
     public GameObject blackScreen;
     public Slider brightnessSlider;
     public Light moon;
+    public AudioSource tickAudioSource;
 
     [Header("Settings")]
     public bool isPaused = false;
@@ -95,5 +96,10 @@ public class NonVRInputManager : MonoBehaviour
     public void OnClickQuit()
     {
         Application.Quit();
+    }
+
+    public void PlayTickSound()
+    {
+        tickAudioSource.Play();
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,13 +6,18 @@ public class GameManager : MonoBehaviour
 {
     int lastCollectiblePosition = 0;
 
-    [Header("References")]
+    [Header("Prefabs")]
     public GameObject collectiblePrefab;
     public GameObject collectiblePositions;
-    public TMPro.TextMeshProUGUI scoreDisplay;
     public GameObject groundBreakParticlesPrefab;
+    public AudioSource tickAudioSource;
     public Health health;
 
+    [Header("Countdown settings")]
+    public TMPro.TextMeshProUGUI countdownText;
+    public float timeLeft;
+
+    [Header("Giant settings")]
     public Transform giant;
     public InputActionProperty locomotionAction;
 
@@ -21,7 +27,10 @@ public class GameManager : MonoBehaviour
     private float giantRotateDelay = 0.5f;
 
     private float lastRotate = 0f;
+    private bool countdownEnabled = false;
+    private bool isNewSecond = false;
 
+    // Singleton
     private static GameManager instance = null;
     public static GameManager Instance => instance;
     private void Awake()
@@ -40,7 +49,35 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        countdownEnabled = true;
         SpawnNewCollectible();
+        InvokeRepeating("PlayTickSound", 0f, 1f);
+    }
+
+    void Update()
+    {
+        // Giant rotation
+        float rotate = locomotionAction.action.ReadValue<Vector2>().x;
+        if (rotate != 0 && Time.time > lastRotate + giantRotateDelay)
+        {
+            lastRotate = Time.time;
+            giant.RotateAround(Vector3.zero, Vector3.up, -rotate * giantRotationAngleStep);
+        }
+        
+        // Countdown
+        if (countdownEnabled)
+        {
+            if (timeLeft > 0)
+            {
+                timeLeft -= Time.deltaTime;
+                UpdateCountdown(timeLeft);
+            }
+            else
+            {
+                timeLeft = 0;
+                countdownEnabled = false;
+            }
+        }
     }
 
     void SpawnNewCollectible()
@@ -61,13 +98,18 @@ public class GameManager : MonoBehaviour
         SpawnNewCollectible();
     }
 
-    void Update()
+    void UpdateCountdown(float currentTime)
     {
-        float rotate = locomotionAction.action.ReadValue<Vector2>().x;
-        if (rotate != 0 && Time.time > lastRotate + giantRotateDelay)
-        {
-            lastRotate = Time.time;
-            giant.RotateAround(Vector3.zero, Vector3.up, -rotate * giantRotationAngleStep);
-        }
+        currentTime++;
+
+        float minutes = Mathf.FloorToInt(currentTime / 60);
+        float seconds = Mathf.FloorToInt(currentTime % 60);
+
+        countdownText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    public void PlayTickSound()
+    {
+        tickAudioSource.Play();
     }
 }

@@ -7,6 +7,7 @@ public class ThrowableRockCollision : MonoBehaviour
     public ParticleSystem dirtParticleSystem;
     public ParticleSystem grassParticleSystem;
     public float destroyDelay = 3.5f;
+    public float destroyTreeDelay = 10f;
 
     public float directHitDamage = 50f;
     public float aoeHitDamage = 20f;
@@ -75,7 +76,7 @@ public class ThrowableRockCollision : MonoBehaviour
             if (collision.transform.parent.gameObject.GetComponent<Rigidbody>() == null)
             {
                 collision.transform.parent.gameObject.AddComponent<Rigidbody>();
-                Destroy(collision.transform.parent.gameObject, destroyDelay);
+                Destroy(collision.transform.parent.gameObject, destroyTreeDelay);
             }
             Destroy(gameObject, destroyDelay);
         }
