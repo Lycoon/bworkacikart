@@ -55,6 +55,7 @@ public class NonVRInputManager : MonoBehaviour
             if (blackScreenCanvasGroup.alpha <= 0)
             {
                 blackScreenCanvasGroup.alpha = 0;
+                blackScreen.SetActive(false);
                 isFadingOut = false;
             }
         }
