@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NonVRInputManager : MonoBehaviour
@@ -62,6 +63,12 @@ public class NonVRInputManager : MonoBehaviour
 
         // Brightness value
         moon.intensity = brightnessSlider.value;
+    }
+
+    public void BackToMainMenu()
+    {
+        Debug.Log("Back to main menu");
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void TogglePauseMenu()

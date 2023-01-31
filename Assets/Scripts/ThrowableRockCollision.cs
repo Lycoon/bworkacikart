@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ThrowableRockCollision : MonoBehaviour
 {
+    public List<AudioClip> rockHitSounds;
     public ParticleSystem dirtParticleSystem;
     public ParticleSystem grassParticleSystem;
     public float destroyDelay = 3.5f;
@@ -55,6 +57,7 @@ public class ThrowableRockCollision : MonoBehaviour
         {
             dirtParticleSystem.Play();
             Destroy(gameObject, destroyDelay);
+            PlayRockHit();
 
             if (!hitPlayer)
             {
@@ -85,6 +88,12 @@ public class ThrowableRockCollision : MonoBehaviour
             GameManager.Instance.health.TakeDamage(damage);
             Destroy(gameObject, destroyDelay);
         }
+    }
+
+    void PlayRockHit()
+    {
+        int randomIndex = Random.Range(0, rockHitSounds.Count);
+        AudioSource.PlayClipAtPoint(rockHitSounds[randomIndex], transform.position);
     }
 
     void OnDrawGizmos()

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,10 +6,12 @@ public class Health : MonoBehaviour
 {
     [Header("References")]
     public Slider healthSlider;
+    public SpiderAnimation spiderAnimation;
+    public GameObject gameOverScreen;
 
     [Header("Settings")]
-    public int maxHealth = 100;
-    public int currentHealth;
+    public float maxHealth = 100;
+    public float currentHealth;
 
     void Start()
     {
@@ -17,20 +20,30 @@ public class Health : MonoBehaviour
 
     void Update()
     {
-        healthSlider.value = currentHealth / (float) maxHealth;
+        healthSlider.value = currentHealth / maxHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         currentHealth -= damage;
         if (currentHealth <= 0)
+        {
             currentHealth = 0;
+            spiderAnimation.SetDead(true);
+            ToggleGameOverScreen();
+        }
     }
 
-    public void Heal(int healAmount)
+    public void Heal(float healAmount)
     {
         currentHealth += healAmount;
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
+    }
+
+    IEnumerator ToggleGameOverScreen()
+    {
+        yield return new WaitForSeconds(2.5f);
+        gameOverScreen.SetActive(true);
     }
 }

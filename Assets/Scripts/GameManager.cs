@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public InputActionProperty locomotionAction;
 
     [Header("Settings")]
-    public int collectibleHealth = 10;
+    public float collectibleHealth = 10f;
     public float giantRotationAngleStep = 10f;
     private float giantRotateDelay = 0.5f;
 

@@ -39,6 +39,20 @@ public class SpiderAnimation : MonoBehaviour
         }
     }
 
+    public void SetDead(bool dead)
+    {
+        if (dead)
+        {
+            PlayDeadAnimation();
+            isDead = true;
+        }
+        else
+        {
+            fakeTargets.Clear();
+            isDead = false;
+        }
+    }
+
     void Update()
     {
         for (int i = 0; i < nbLegs; i++)
@@ -69,18 +83,7 @@ public class SpiderAnimation : MonoBehaviour
         body.transform.LookAt(transform.position + forward, up);
 
         if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (!isDead)
-            {
-                PlayDeadAnimation();
-                isDead = true;
-            }
-            else
-            {
-                fakeTargets.Clear();
-                isDead = false;
-            }
-        }
+            SetDead(!isDead);
 
         if (!isDead)
         {

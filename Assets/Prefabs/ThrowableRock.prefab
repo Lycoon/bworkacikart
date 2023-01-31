@@ -9822,9 +9822,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb7ace26e1ece34d8176dafdd08577c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rockHitSounds:
+  - {fileID: 8300000, guid: 452e17fc8b7a0f842acfab195a1a48ce, type: 3}
+  - {fileID: 8300000, guid: 23e4796fbbd9618498583659eb5de3f5, type: 3}
+  - {fileID: 8300000, guid: 3b3dd85c7cd41a843bad8e61214d3b3d, type: 3}
   dirtParticleSystem: {fileID: 6003373653817192330}
   grassParticleSystem: {fileID: 5760903610503875922}
   destroyDelay: 3.5
-  hitDamage: 10
+  directHitDamage: 50
+  aoeHitDamage: 20
   minDamageVelocity: 10
   maxDamageVelocity: 50
