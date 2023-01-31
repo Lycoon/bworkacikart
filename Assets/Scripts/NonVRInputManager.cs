@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class NonVRInputManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class NonVRInputManager : MonoBehaviour
     [Header("References")]
     public PlayerInput playerInput;
     public GameObject pauseMenu;
+    public RawImage vrView;
 
     [Header("Settings")]
     public bool isPaused = false;
@@ -55,6 +57,11 @@ public class NonVRInputManager : MonoBehaviour
     public void ToggleOptions()
     {
         Debug.Log("Options");
+    }
+
+    public void ToggleVRView()
+    {
+        vrView.enabled = !vrView.enabled;
     }
 
     public void OnClickQuit()
