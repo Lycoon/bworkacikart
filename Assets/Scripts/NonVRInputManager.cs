@@ -11,12 +11,14 @@ public class NonVRInputManager : MonoBehaviour
     [Header("References")]
     public PlayerInput playerInput;
     public GameObject pauseMenu;
-    public RawImage VRView;
     public CanvasGroup blackScreenCanvasGroup;
     public GameObject blackScreen;
     public Slider brightnessSlider;
     public Light moon;
     public AudioSource tickAudioSource;
+
+    public Transform SplitView;
+    public Transform FullNonVRView;
 
     [Header("Settings")]
     public bool isPaused = false;
@@ -90,7 +92,9 @@ public class NonVRInputManager : MonoBehaviour
 
     public void ToggleVRView()
     {
-        VRView.enabled = !VRView.enabled;
+        bool toggle = SplitView.gameObject.activeSelf;
+        SplitView.gameObject.SetActive(!toggle);
+        FullNonVRView.gameObject.SetActive(toggle);
     }
 
     public void OnClickQuit()

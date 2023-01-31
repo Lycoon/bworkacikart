@@ -25,11 +25,11 @@ public class GameManager : MonoBehaviour
     [Header("Settings")]
     public float collectibleHealth = 10f;
     public float giantRotationAngleStep = 10f;
-    private float giantRotateDelay = 0.5f;
 
+    private float giantRotateDelay = 0.5f;
     private float lastRotate = 0f;
+
     private bool countdownEnabled = false;
-    private bool isNewSecond = false;
 
     // Singleton
     private static GameManager instance = null;
