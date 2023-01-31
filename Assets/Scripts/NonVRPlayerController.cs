@@ -27,11 +27,6 @@ public class NonVRPlayerController : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-
-        if (moveInput.magnitude > 0.0f && controller.isGrounded)
-            walkAudioSource.enabled = true;
-        else
-            walkAudioSource.enabled = false;
     }
 
     void OnJump()
@@ -62,5 +57,10 @@ public class NonVRPlayerController : MonoBehaviour
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveInput.x * cameraRight + moveInput.y * cameraForward), Time.deltaTime * rotationSpeed);
         }
+
+        if (moveInput.magnitude > 0.0f && controller.isGrounded)
+            walkAudioSource.enabled = true;
+        else
+            walkAudioSource.enabled = false;
     }
 }
