@@ -13,5 +13,16 @@ public class ThrowableRockCollision : MonoBehaviour
             dirtParticleSystem.Play();
             Destroy(gameObject, destroyDelay);
         }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Tree"))
+        {
+            grassParticleSystem.Play();
+            dirtParticleSystem.Play();
+            if (collision.transform.parent.gameObject.GetComponent<Rigidbody>() == null)
+            {
+                collision.transform.parent.gameObject.AddComponent<Rigidbody>();
+                Destroy(collision.transform.parent.gameObject, destroyDelay);
+            }
+            Destroy(gameObject, destroyDelay);
+        }
     }
 }
